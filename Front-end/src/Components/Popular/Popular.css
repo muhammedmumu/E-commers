@@ -1,0 +1,106 @@
+.popular {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    height: 90vh;
+}
+
+.popular h1 {
+    color: #171717;
+    font-size: 50px;
+    font-weight: 600;
+}
+
+.popular hr {
+    width: 200px;
+    height: 6px;
+    border-radius: 10px;
+    background: #252525;
+}
+
+.popular-item {
+    margin-top: 50px;
+    display: flex;
+    gap: 30px;
+}
+
+/* Media query for screens larger than 1280px */
+@media (min-width: 1280px) {
+    .popular {
+        height: 70vh;
+        /* Keep the height as 90vh */
+    }
+
+    .popular h1 {
+        font-size: 40px;
+        /* Increase font size for larger screens */
+    }
+
+    .popular hr {
+        width: 160px;
+        height: 4px;
+        /* Adjust hr width for larger screens */
+    }
+
+    .popular-item {
+        gap: 20px;
+        margin-top: 30px;
+        /* Increase gap between items for larger screens */
+    }
+}
+@media (max-width: 1224px) {
+    .popular {
+        height: 60vh;
+        /* Adjust height for medium screens */
+    }
+
+    .popular h1 {
+        font-size: 30px;
+        /* Decrease font size for medium screens */
+    }
+
+    .popular hr {
+        width: 120px;
+        /* Adjust hr width for medium screens */
+        height: 3px;
+        /* Adjust hr height for medium screens */
+    }
+
+    .popular-item {
+        gap: 15px;
+        /* Adjust gap between items for medium screens */
+        margin-top: 20px;
+        /* Adjust top margin for medium screens */
+    }
+}
+@media (max-width: 800px) {
+    .popular {
+        height: 50vh;
+        gap: 6px; /* Allow height to adjust based on content for smaller screens */
+    }
+
+    .popular h1 {
+        font-size: 20px; /* Decrease font size for smaller screens */
+    }
+
+    .popular hr {
+        width: 100px; /* Adjust hr width for smaller screens */
+        
+    }
+
+    .popular-item {
+        gap: 5px; /* Adjust gap between items for smaller screens */
+        }
+}
+@media (max-width: 500px) {
+    .popular {
+        height: 90vh; /* Set height of .popular to 90vh for screens <= 500px */
+    }
+
+    .popular-item {
+        display: grid; /* Change display of .popular-item to grid */
+        grid-template-columns: 1fr 1fr; /* Define two equal columns */
+        gap: 20px; /* Define gap between grid items */
+    }
+}

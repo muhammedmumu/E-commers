@@ -1,0 +1,154 @@
+.offers {
+    width: 65%;
+    height: 60vh;
+    display: flex;
+    margin: auto;
+    padding: 0px 140px;
+    margin-bottom: 150px;
+    background: linear-gradient(180deg, #fde1ff 0%, #e1ffea22 60%);
+}
+
+.offers-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.offers-left h1 {
+    color: #171717;
+    font-size: 80px;
+    font-weight: 600;
+}
+
+.offers-left p {
+    color: #171717;
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.offers-left button {
+    width: 282px;
+    height: 70px;
+    border-radius: 35px;
+    background: #ff4141;
+    border: none;
+    color: white;
+    font-size: 22px;
+    font-weight: 500;
+    margin-top: 30px;
+    cursor: pointer;
+}
+
+.offers-right {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-top: 50px;
+}
+@media (max-width: 1280px) {
+    .offers {
+        padding: 0px 80px; /* Horizontal padding of 80px, no vertical padding */
+        margin-bottom: 120px; /* Bottom margin of 120px */
+    }
+
+    .offers-left h1 {
+        font-size: 40px; /* Font size of h1 inside .offers-left */
+    }
+
+    .offers-left p {
+        font-size: 18px; /* Font size of p inside .offers-left */
+    }
+
+    .offers-right img {
+        width: 300px; /* Width of img inside .offers-right */
+    }
+    .offers-left button {
+        width: 220px; /* Width of button inside .offers-left */
+        height: 50px; /* Height of button inside .offers-left */
+        font-size: 18px; /* Font size of button inside .offers-left */
+    }
+
+    .offers-right {
+        padding-top: 30px; /* Top padding of .offers-right */
+    }
+}
+@media (max-width: 1224px) {
+    .offers {
+        padding: 0px 60px; /* Horizontal padding of 60px, no vertical padding */
+        margin-bottom: 80px; /* Bottom margin of 80px */
+        height: 40vh; /* Height of .offers container set to 40% of viewport height */
+    }
+
+    .offers-left h1 {
+        font-size: 30px; /* Font size of h1 inside .offers-left */
+    }
+
+    .offers-left p {
+        font-size: 16px; /* Font size of p inside .offers-left */
+    }
+    .offers-right img {
+        width: 200px; /* Width of img inside .offers-right */
+    }
+
+    .offers-left button {
+        width: 160px; /* Width of button inside .offers-left */
+        height: 40px; /* Height of button inside .offers-left */
+        font-size: 16px; /* Font size of button inside .offers-left */
+    }
+
+    .offers-right {
+        padding-top: 30px; /* Top padding of .offers-right */
+    }
+}
+@media (max-width: 800px) {
+    .offers {
+        margin-bottom: 60px; /* Bottom margin of .offers */
+    }
+
+    .offers-left h1 {
+        font-size: 22px; /* Font size of h1 inside .offers-left */
+    }
+
+    .offers-left p {
+        font-size: 13px; /* Font size of p inside .offers-left */
+    }
+
+    .offers-right img {
+        width: 180px; /* Width of img inside .offers-right */
+    }
+
+    .offers-left button {
+        width: 140px; /* Width of button inside .offers-left */
+        height: 30px; /* Height of button inside .offers-left */
+        font-size: 12px; /* Font size of button inside .offers-left */
+    }
+}
+@media (max-width: 500px) {
+    .offers {
+        height: 25vh; /* Height of .offers container set to 25% of viewport height */
+        margin-bottom: 50px; /* Bottom margin of .offers */
+    }
+
+    .offers-left h1 {
+        font-size: 16px; /* Font size of h1 inside .offers-left */
+    }
+
+    .offers-left p {
+        font-size: 10px; /* Font size of p inside .offers-left */
+    }
+
+    .offers-right img {
+        width: 120px; /* Width of img inside .offers-right */
+    }
+
+    .offers-left button {
+        width: 120px; /* Width of button inside .offers-left */
+        height: 25px; /* Height of button inside .offers-left */
+        font-size: 10px; /* Font size of button inside .offers-left */
+        margin-top: 12px; /* Top margin of button inside .offers-left */
+    }
+}
+
+
