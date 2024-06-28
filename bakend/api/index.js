@@ -56,17 +56,6 @@ app.get("/", (req, res) => {
   res.send("Express App is Running");
 });
 
-// Image Storage engine
-const storage = multer.diskStorage({
-  destination: "./upload/images", // Corrected path
-  filename: (req, file, cb) => {
-    return cb(
-      null,
-      `${file.fieldname}_${Date.now()}${path.extname(file.originalname)}`
-    );
-  },
-});
-
 // Schema for creating a MongoDB collection
 const Product = mongoose.model("Product", {
   id: {
