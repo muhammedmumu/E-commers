@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState } from 'react';
-import localProductData from '../Components/Assets/all_product'; // Assuming this is a local JSON file with product data
+import allProducts from '../Components/Assets/all_product'; // Assuming this is a local JSON file with product data
 
 export const ShopContext = createContext(null);
 
@@ -12,12 +12,9 @@ const getDefaultCart = () => {
 }
 
 const ShopContextProvider = (props) => {
-    const [all_Product, setAllProducts] = useState([]);
     const [cartItems, setCartItems] = useState(getDefaultCart());
 
     useEffect(() => {
-        // Directly using local JSON data
-        setAllProducts(localProductData);
 
         if (localStorage.getItem('auth-token')) {
             fetch('http://localhost:4000/getcart', {
@@ -95,7 +92,7 @@ const ShopContextProvider = (props) => {
     const contextValue = {
         getTotalCartItems,
         getTotalCartAmount,
-        all_Product,
+        allProducts,
         cartItems,
         addToCart,
         removeFromCart,
