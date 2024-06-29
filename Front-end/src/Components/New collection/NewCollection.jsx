@@ -1,18 +1,11 @@
 import React, { useState,useEffect } from "react";
 import './NewCollection.css';
 import Item from "../Items/Items";
+import new_collection from '../Assets/new_collections';
 
 const NewCollection = () => {
 
-    const [new_collection,setNew_collection] = useState([]);
 
-    
-    useEffect(() => {
-        fetch('https://e-commers-zter.vercel.app/newcollection')
-            .then((response) => response.json())
-            .then((data) => setNew_collection(data))
-    },[])
-    
     return (
         <div className="newCollection">
             <h1>NEW COLLECTION</h1>
