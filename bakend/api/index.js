@@ -13,7 +13,7 @@ app.use(cors());
 
 // MongoDB connection URI
 const dbURI =
-  "mongodb+srv://muhammedmukrim:9677461788888@cluster0.sq1e6ok.mongodb.net/mern-stack";
+  "mongodb+srv://muhammedmukrimm:MUMU%40124@cluster0.67laz9y.mongodb.net/mern-stack";
 
 // Function to connect to MongoDB with retry logic
 const connectWithRetry = () => {
