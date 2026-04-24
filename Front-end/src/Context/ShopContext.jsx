@@ -23,7 +23,7 @@ const ShopContextProvider = (props) => {
     () => localStorage.getItem(STORAGE_KEYS.authToken) || ""
   );
   const [backendStatus, setBackendStatus] = useState(
-    authToken ? "checking" : "offline"
+    authToken ? "checking" : "idle"
   );
 
   useEffect(() => {
@@ -41,7 +41,7 @@ const ShopContextProvider = (props) => {
 
   useEffect(() => {
     if (!authToken) {
-      setBackendStatus("offline");
+      setBackendStatus("idle");
       return;
     }
 
