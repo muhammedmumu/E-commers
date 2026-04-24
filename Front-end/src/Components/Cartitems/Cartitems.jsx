@@ -10,7 +10,7 @@ const Cartitems = () => {
     }
 
 
-const { getTotalCartAmount, all_product, cartItems, removeFromCart } = useContext(ShopContext);
+const { getTotalCartAmount, allProducts, cartItems, removeFromCart } = useContext(ShopContext);
 return (
     <div className="cartitems">
         <div className="cartitems-format-main">
@@ -22,9 +22,9 @@ return (
             <p>Remove</p>
         </div>
         <hr />
-        {all_product.map((e) => {
+        {allProducts.map((e) => {
             if (cartItems[e.id] > 0) {
-                return <div>
+                return <div key={e.id}>
                     <div className="cartitems-format cartitems-format-main">
                         <img src={e.image} alt="" className='carticon-product-icon' />
                         <p>{e.name}</p>

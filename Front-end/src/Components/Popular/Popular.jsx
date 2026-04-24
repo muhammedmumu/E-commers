@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import './Popular.css'
 import Item from "../Items/Items";
 import data_product from '../Assets/data';

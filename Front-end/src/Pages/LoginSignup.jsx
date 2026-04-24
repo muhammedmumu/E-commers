@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import './CSS/LoginSignup.css'
+import { API_BASE_URL } from "../config";
 
 const LoginSignup = () => {
 
@@ -16,7 +17,7 @@ const LoginSignup = () => {
     const signup = async () => {
         console.log("Sign in function is exicuted", formData);
         let responseData;
-        await fetch('https://e-commers-zter.vercel.app/signup', {
+        await fetch(`${API_BASE_URL}/signup`, {
             method: 'POST',
             headers: {
                 Accept: 'application/form-data',
@@ -37,7 +38,7 @@ const LoginSignup = () => {
     const login = async () => {
         console.log("Login function is exicuted", formData);
         let responseData;
-        await fetch('https://e-commers-zter.vercel.app/login', {
+        await fetch(`${API_BASE_URL}/login`, {
             method: 'POST',
             headers: {
                 Accept: 'application/form-data',
