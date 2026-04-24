@@ -1,11 +1,14 @@
 .offers {
     width: 65%;
-    height: 60vh;
+    min-height: 60vh;
     display: flex;
+    align-items: center;
+    gap: 40px;
     margin: auto;
-    padding: 0px 140px;
+    padding: 40px 140px;
     margin-bottom: 150px;
     background: linear-gradient(180deg, #fde1ff 0%, #e1ffea22 60%);
+    box-sizing: border-box;
 }
 
 .offers-left {
@@ -13,6 +16,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    min-width: 0;
 }
 
 .offers-left h1 {
@@ -45,11 +49,18 @@
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    padding-top: 50px;
+    min-width: 0;
+}
+
+.offers-right img {
+    max-width: 100%;
+    height: auto;
 }
 @media (max-width: 1280px) {
     .offers {
-        padding: 0px 80px; /* Horizontal padding of 80px, no vertical padding */
+        width: 75%;
+        min-height: auto;
+        padding: 40px 80px; /* Horizontal padding of 80px, no vertical padding */
         margin-bottom: 120px; /* Bottom margin of 120px */
     }
 
@@ -71,14 +82,15 @@
     }
 
     .offers-right {
-        padding-top: 30px; /* Top padding of .offers-right */
+        justify-content: center;
     }
 }
 @media (max-width: 1224px) {
     .offers {
-        padding: 0px 60px; /* Horizontal padding of 60px, no vertical padding */
+        width: calc(100% - 48px);
+        padding: 36px 60px; /* Horizontal padding of 60px, no vertical padding */
         margin-bottom: 80px; /* Bottom margin of 80px */
-        height: 40vh; /* Height of .offers container set to 40% of viewport height */
+        min-height: auto;
     }
 
     .offers-left h1 {
@@ -99,11 +111,14 @@
     }
 
     .offers-right {
-        padding-top: 30px; /* Top padding of .offers-right */
+        justify-content: center;
     }
 }
 @media (max-width: 800px) {
     .offers {
+        width: calc(100% - 32px);
+        gap: 24px;
+        padding: 32px;
         margin-bottom: 60px; /* Bottom margin of .offers */
     }
 
@@ -124,10 +139,18 @@
         height: 30px; /* Height of button inside .offers-left */
         font-size: 12px; /* Font size of button inside .offers-left */
     }
+
+    .offers-right {
+        align-items: flex-end;
+    }
 }
 @media (max-width: 500px) {
     .offers {
-        height: 25vh; /* Height of .offers container set to 25% of viewport height */
+        width: calc(100% - 24px);
+        flex-direction: column;
+        text-align: center;
+        gap: 20px;
+        padding: 24px 20px;
         margin-bottom: 50px; /* Bottom margin of .offers */
     }
 
@@ -148,6 +171,14 @@
         height: 25px; /* Height of button inside .offers-left */
         font-size: 10px; /* Font size of button inside .offers-left */
         margin-top: 12px; /* Top margin of button inside .offers-left */
+    }
+
+    .offers-left {
+        align-items: center;
+    }
+
+    .offers-right {
+        justify-content: center;
     }
 }
 

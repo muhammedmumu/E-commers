@@ -3,7 +3,8 @@
     flex-direction: column;
     align-items: center;
     gap: 10px;
-    height: 90vh;
+    padding: 60px 20px;
+    margin-bottom: 40px;
 }
 
 .popular h1 {
@@ -22,14 +23,15 @@
 .popular-item {
     margin-top: 50px;
     display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 30px;
 }
 
 /* Media query for screens larger than 1280px */
 @media (min-width: 1280px) {
     .popular {
-        height: 70vh;
-        /* Keep the height as 90vh */
+        padding: 70px 40px;
     }
 
     .popular h1 {
@@ -50,11 +52,6 @@
     }
 }
 @media (max-width: 1224px) {
-    .popular {
-        height: 60vh;
-        /* Adjust height for medium screens */
-    }
-
     .popular h1 {
         font-size: 30px;
         /* Decrease font size for medium screens */
@@ -76,8 +73,9 @@
 }
 @media (max-width: 800px) {
     .popular {
-        height: 50vh;
         gap: 6px; /* Allow height to adjust based on content for smaller screens */
+        padding: 48px 16px;
+        margin-bottom: 24px;
     }
 
     .popular h1 {
@@ -91,16 +89,18 @@
 
     .popular-item {
         gap: 5px; /* Adjust gap between items for smaller screens */
-        }
+        margin-top: 24px;
+    }
 }
 @media (max-width: 500px) {
     .popular {
-        height: 90vh; /* Set height of .popular to 90vh for screens <= 500px */
+        padding: 40px 16px;
     }
 
     .popular-item {
         display: grid; /* Change display of .popular-item to grid */
         grid-template-columns: 1fr 1fr; /* Define two equal columns */
         gap: 20px; /* Define gap between grid items */
+        margin-top: 20px;
     }
 }

@@ -1,109 +1,184 @@
-import React, { createContext, useEffect, useState } from 'react';
-import allProducts from '../Components/Assets/all_product'; // Assuming this is a local JSON file with product data
-import { API_BASE_URL } from '../config';
+import React, { createContext, useEffect, useState } from "react";
+import allProducts from "../Components/Assets/all_product";
+import { requestJson } from "../utils/api";
+import {
+  STORAGE_KEYS,
+  createCartState,
+  normalizeCartState,
+  readJSON,
+  removeStoredValue,
+  writeJSON,
+} from "../utils/storage";
 
 export const ShopContext = createContext(null);
 
-const getDefaultCart = () => {
-    let cart = {};
-    for (let index = 0; index <= 300; index++) {
-        cart[index] = 0;
-    }
-    return cart;
-}
-
 const ShopContextProvider = (props) => {
-    const [cartItems, setCartItems] = useState(getDefaultCart());
+  const [cartItems, setCartItems] = useState(() =>
+    normalizeCartState(readJSON(STORAGE_KEYS.cart, null), allProducts)
+  );
+  const [currentUser, setCurrentUser] = useState(() =>
+    readJSON(STORAGE_KEYS.currentUser, null)
+  );
+  const [authToken, setAuthToken] = useState(
+    () => localStorage.getItem(STORAGE_KEYS.authToken) || ""
+  );
+  const [backendStatus, setBackendStatus] = useState(
+    authToken ? "checking" : "offline"
+  );
 
-    useEffect(() => {
+  useEffect(() => {
+    writeJSON(STORAGE_KEYS.cart, cartItems);
+  }, [cartItems]);
 
-        if (localStorage.getItem('auth-token')) {
-            fetch(`${API_BASE_URL}/getcart`, {
-                method: 'POST',
-                headers: {
-                    Accept: 'application/json',
-                    'auth-token': localStorage.getItem('auth-token'),
-                    'Content-Type': 'application/json',
-                },
-                body: "",
-            })
-                .then((response) => response.json())
-                .then((data) => setCartItems(data))
-                .catch((error) => console.error('Error fetching cart data:', error));
-        }
-    }, []);
-
-    const addToCart = (itemId) => {
-        setCartItems((prev) => ({ ...prev, [itemId]: prev[itemId] + 1 }));
-        if (localStorage.getItem('auth-token')) {
-            fetch(`${API_BASE_URL}/addtocart`, {
-                method: 'POST',
-                headers: {
-                    Accept: 'application/json',
-                    'auth-token': localStorage.getItem('auth-token'),
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ itemId }),
-            })
-                .then((response) => response.json())
-                .then((data) => console.log(data))
-                .catch((error) => console.error('Error adding to cart:', error));
-        }
+  useEffect(() => {
+    if (currentUser) {
+      writeJSON(STORAGE_KEYS.currentUser, currentUser);
+      return;
     }
 
-    const removeFromCart = (itemId) => {
-        setCartItems((prev) => ({ ...prev, [itemId]: prev[itemId] - 1 }));
-        if (localStorage.getItem('auth-token')) {
-            fetch(`${API_BASE_URL}/removefromcart`, {
-                method: 'POST',
-                headers: {
-                    Accept: 'application/json',
-                    'auth-token': localStorage.getItem('auth-token'),
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ itemId }),
-            })
-                .then((response) => response.json())
-                .then((data) => console.log(data))
-                .catch((error) => console.error('Error removing from cart:', error));
-        }
+    removeStoredValue(STORAGE_KEYS.currentUser);
+  }, [currentUser]);
+
+  useEffect(() => {
+    if (!authToken) {
+      setBackendStatus("offline");
+      return;
     }
 
-    const getTotalCartAmount = () => {
-        let totalAmount = 0;
-        for (const item in cartItems) {
-            if (cartItems[item] > 0) {
-                let itemInfo = allProducts.find((product) => product.id === Number(item));
-                totalAmount += itemInfo.new_price * cartItems[item];
-            }
-        }
-        return totalAmount;
-    }
+    let ignore = false;
 
-    const getTotalCartItems = () => {
-        let totalItems = 0;
-        for (const item in cartItems) {
-            if (cartItems[item] > 0) {
-                totalItems += cartItems[item];
-            }
-        }
-        return totalItems;
-    }
+    const hydrateRemoteCart = async () => {
+      try {
+        const remoteCart = await requestJson("/getcart", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "auth-token": authToken,
+          },
+          body: JSON.stringify({}),
+        });
 
-    const contextValue = {
-        getTotalCartItems,
-        getTotalCartAmount,
-        allProducts,
-        cartItems,
-        addToCart,
-        removeFromCart,
+        if (!ignore) {
+          setCartItems(normalizeCartState(remoteCart, allProducts));
+          setBackendStatus("connected");
+        }
+      } catch (error) {
+        if (!ignore) {
+          setBackendStatus("offline");
+        }
+      }
     };
 
-    return (
-        <ShopContext.Provider value={contextValue}>
-            {props.children}
-        </ShopContext.Provider>
-    );
-}
+    hydrateRemoteCart();
+
+    return () => {
+      ignore = true;
+    };
+  }, [authToken]);
+
+  const syncCart = async (path, itemId) => {
+    if (!authToken) {
+      return;
+    }
+
+    try {
+      await requestJson(path, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "auth-token": authToken,
+        },
+        body: JSON.stringify({ itemId }),
+      });
+      setBackendStatus("connected");
+    } catch (error) {
+      setBackendStatus("offline");
+    }
+  };
+
+  const addToCart = (itemId) => {
+    setCartItems((prev) => ({
+      ...prev,
+      [itemId]: (prev[itemId] || 0) + 1,
+    }));
+    syncCart("/addtocart", itemId);
+  };
+
+  const removeFromCart = (itemId) => {
+    setCartItems((prev) => ({
+      ...prev,
+      [itemId]: Math.max((prev[itemId] || 0) - 1, 0),
+    }));
+    syncCart("/removefromcart", itemId);
+  };
+
+  const clearCart = () => {
+    setCartItems(createCartState(allProducts));
+  };
+
+  const loginUser = ({ token, user }) => {
+    localStorage.setItem(STORAGE_KEYS.authToken, token);
+    setAuthToken(token);
+    setCurrentUser(user);
+  };
+
+  const logoutUser = () => {
+    removeStoredValue(STORAGE_KEYS.authToken);
+    setAuthToken("");
+    setCurrentUser(null);
+    setBackendStatus("offline");
+  };
+
+  const getTotalCartAmount = () => {
+    let totalAmount = 0;
+
+    for (const itemId in cartItems) {
+      if (cartItems[itemId] > 0) {
+        const itemInfo = allProducts.find(
+          (product) => product.id === Number(itemId)
+        );
+
+        if (itemInfo) {
+          totalAmount += itemInfo.new_price * cartItems[itemId];
+        }
+      }
+    }
+
+    return totalAmount;
+  };
+
+  const getTotalCartItems = () => {
+    let totalItems = 0;
+
+    for (const itemId in cartItems) {
+      if (cartItems[itemId] > 0) {
+        totalItems += cartItems[itemId];
+      }
+    }
+
+    return totalItems;
+  };
+
+  const contextValue = {
+    getTotalCartItems,
+    getTotalCartAmount,
+    allProducts,
+    cartItems,
+    addToCart,
+    removeFromCart,
+    clearCart,
+    currentUser,
+    isAuthenticated: Boolean(authToken),
+    backendStatus,
+    loginUser,
+    logoutUser,
+  };
+
+  return (
+    <ShopContext.Provider value={contextValue}>
+      {props.children}
+    </ShopContext.Provider>
+  );
+};
 
 export default ShopContextProvider;
