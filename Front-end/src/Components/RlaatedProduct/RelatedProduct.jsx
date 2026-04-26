@@ -1,9 +1,10 @@
-import React, { useMemo } from "react";
+import React, { useContext, useMemo } from "react";
 import "./RelatedProduct.css";
-import allProducts from "../Assets/all_product";
 import Item from "../Items/Items";
+import { ShopContext } from "../../Context/ShopContext";
 
 const RelatedProduct = ({ category, currentProductId }) => {
+  const { allProducts } = useContext(ShopContext);
   const relatedProducts = useMemo(
     () =>
       allProducts
@@ -11,7 +12,7 @@ const RelatedProduct = ({ category, currentProductId }) => {
           (item) => item.category === category && item.id !== currentProductId
         )
         .slice(0, 4),
-    [category, currentProductId]
+    [allProducts, category, currentProductId]
   );
 
   if (!relatedProducts.length) {

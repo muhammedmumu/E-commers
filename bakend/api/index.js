@@ -11,18 +11,20 @@ const { log } = require("console");
 app.use(express.json());
 app.use(cors());
 
+const asyncHandler = (handler) => (req, res, next) => {
+  Promise.resolve(handler(req, res, next)).catch(next);
+};
+
 // MongoDB connection URI
 const dbURI =
+  process.env.MONGODB_URI ||
   "mongodb+srv://muhammedmukrimm:MUMU%40124@cluster0.67laz9y.mongodb.net/mern-stack";
 
 // Function to connect to MongoDB with retry logic
 const connectWithRetry = () => {
   console.log("MongoDB connection with retry");
   mongoose
-    .connect(dbURI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    })
+    .connect(dbURI)
     .then(() => {
       console.log("MongoDB is connected");
     })
@@ -93,7 +95,7 @@ const Product = mongoose.model("Product", {
 });
 
 // Endpoint to add a product
-app.post("/addproduct", async (req, res) => {
+app.post("/addproduct", asyncHandler(async (req, res) => {
   let products = await Product.find({});
   let id;
   if (products.length > 0) {
@@ -119,24 +121,24 @@ app.post("/addproduct", async (req, res) => {
     success: true,
     name: req.body.name,
   });
-});
+}));
 
 // Endpoint to remove a product
-app.post("/removeproduct", async (req, res) => {
+app.post("/removeproduct", asyncHandler(async (req, res) => {
   await Product.findOneAndDelete({ id: req.body.id });
   console.log("Removed");
   res.json({
     success: true,
     name: req.body.name,
   });
-});
+}));
 
 // Endpoint to get all products
-app.get("/allproducts", async (req, res) => {
+app.get("/allproducts", asyncHandler(async (req, res) => {
   let products = await Product.find({});
   console.log("All Products Fetched");
   res.send(products);
-});
+}));
 
 // Creating endpoint for registering the user
 const Users = mongoose.model("Users", {
@@ -160,7 +162,7 @@ const Users = mongoose.model("Users", {
 });
 
 //user signup endpoints
-app.post("/signup", async (req, res) => {
+app.post("/signup", asyncHandler(async (req, res) => {
   let check = await Users.findOne({ email: req.body.email });
   if (check) {
     return res.status(400).json({
@@ -187,10 +189,10 @@ app.post("/signup", async (req, res) => {
   };
   const token = jwt.sign(data, "secret_ecom");
   res.json({ success: true, token });
-});
+}));
 
 //user Login endpoints
-app.post("/login", async (req, res) => {
+app.post("/login", asyncHandler(async (req, res) => {
   let user = await Users.findOne({ email: req.body.email });
   if (user) {
     const passCompare = req.body.password === user.password;
@@ -208,36 +210,36 @@ app.post("/login", async (req, res) => {
   } else {
     res.json({ success: false, errors: "Wrong Email Id" });
   }
-});
+}));
 
 //creating endpoint for newcollection data
-app.get("/newcollection", async (req, res) => {
+app.get("/newcollection", asyncHandler(async (req, res) => {
   let products = await Product.find({});
   let newcollection = products.slice(1).slice(-8);
   console.log("Newcollection Fetched");
   res.send(newcollection);
-});
+}));
 
 //creating endpoint for popular in women data
-app.get("/popularinwomen", async (req, res) => {
+app.get("/popularinwomen", asyncHandler(async (req, res) => {
   let products = await Product.find({ category: "women" });
   let popular_in_women = products.slice(0, 4);
   console.log("Popular in women Fetched");
   res.send(popular_in_women);
-});
+}));
 
 // Creating middleware to fetch user
 const fetchUser = async (req, res, next) => {
   const token = req.header('auth-token');
   if (!token) {
     return res.status(401).send({ errors: "Access denied" });
-  } 
+  }
   else {
     try {
       const data = jwt.verify(token, 'secret_ecom');
       req.user = data.user;
       next();
-    } 
+    }
     catch (error) {
       res.status(401).json({ errors: "Invalid token" });
     }
@@ -246,40 +248,52 @@ const fetchUser = async (req, res, next) => {
 };
 
 //creating endpoint for addtocart data
-app.post("/addtocart", fetchUser, async (req, res) => {
-  console.log("Added",req.body.itemId)
-    
+app.post("/addtocart", fetchUser, asyncHandler(async (req, res) => {
+  console.log("Added", req.body.itemId)
 
-  let userData = await Users.findOne({_id:req.user.id});
+
+  let userData = await Users.findOne({ _id: req.user.id });
   userData.cartData[req.body.itemId] += 1;
-  await Users.findOneAndUpdate({_id:req.user.id},{cartData:userData.cartData});
+  await Users.findOneAndUpdate({ _id: req.user.id }, { cartData: userData.cartData });
   res.send("Added")
 
-});
+}));
 // Endpoint to remove product from cart
-app.post('/removefromcart', fetchUser, async (req, res) => {
-  console.log("removed",req.body.itemId)
-    let userData = await Users.findOne({_id:req.user.id});
-    if(userData.cartData[req.body.itemId]>0)
+app.post('/removefromcart', fetchUser, asyncHandler(async (req, res) => {
+  console.log("removed", req.body.itemId)
+  let userData = await Users.findOne({ _id: req.user.id });
+  if (userData.cartData[req.body.itemId] > 0)
     userData.cartData[req.body.itemId] -= 1;
-    await Users.findOneAndUpdate({_id:req.user.id},{cartData:userData.cartData});
-    res.send("Removed")
-  
+  await Users.findOneAndUpdate({ _id: req.user.id }, { cartData: userData.cartData });
+  res.send("Removed")
+
+}));
+
+app.post('/getcart', fetchUser, asyncHandler(async (req, res) => {
+  console.log("GetCart");
+  // Fetch user data using middleware
+  let userData = await Users.findOne({ _id: req.user.id });
+  // Respond with user's cart data
+  res.json(userData.cartData);
+
+}));
+
+app.use((error, req, res, next) => {
+  console.error("Request failed:", error.message);
+  res.status(503).json({
+    success: false,
+    errors: "Backend service unavailable. Please try again.",
   });
-
-  app.post('/getcart', fetchUser, async (req, res) => {
-    console.log("GetCart");
-    // Fetch user data using middleware
-    let userData = await Users.findOne({ _id: req.user.id });
-    // Respond with user's cart data
-    res.json(userData.cartData);
-
 });
 
-const server = app.listen(port, (error) => {
-  if (!error) {
-    console.log("Server running on port " + port);
-  } else {
-    console.log("Error: " + error);
-  }
-});
+if (process.env.VERCEL) {
+  module.exports = app;
+} else {
+  app.listen(port, (error) => {
+    if (!error) {
+      console.log("Server running on port " + port);
+    } else {
+      console.log("Error: " + error);
+    }
+  });
+}

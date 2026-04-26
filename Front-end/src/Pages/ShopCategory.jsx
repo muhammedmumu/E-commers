@@ -1,9 +1,10 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import "./CSS/ShopCategory.css";
 import Item from "../Components/Items/Items";
-import all_product from "../Components/Assets/all_product";
+import { ShopContext } from "../Context/ShopContext";
 
 const ShopCategory = (props) => {
+  const { allProducts } = useContext(ShopContext);
   const [visibleCount, setVisibleCount] = useState(8);
   const [sortOrder, setSortOrder] = useState("featured");
 
@@ -13,8 +14,8 @@ const ShopCategory = (props) => {
   }, [props.category]);
 
   const filteredProducts = useMemo(
-    () => all_product.filter((item) => item.category === props.category),
-    [props.category]
+    () => allProducts.filter((item) => item.category === props.category),
+    [allProducts, props.category]
   );
 
   const sortedProducts = useMemo(() => {

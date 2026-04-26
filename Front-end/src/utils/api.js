@@ -10,9 +10,10 @@ export const requestJson = async (path, options = {}) => {
 
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeout);
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
 
   try {
-    const response = await fetch(`${API_BASE_URL}${path}`, {
+    const response = await fetch(`${API_BASE_URL}${normalizedPath}`, {
       ...restOptions,
       headers: {
         Accept: "application/json",
