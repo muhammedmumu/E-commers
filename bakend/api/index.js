@@ -18,7 +18,7 @@ const asyncHandler = (handler) => (req, res, next) => {
 // MongoDB connection URI
 const dbURI =
   process.env.MONGODB_URI ||
-  "mongodb+srv://muhammedmukrimm:MUMU%40124@cluster0.67laz9y.mongodb.net/mern-stack";
+  "mongodb+srv://muhammedmukrim:E-commerce123@cluster0.sq1e6ok.mongodb.net/?appName=Cluster0";
 
 // Function to connect to MongoDB with retry logic
 const connectWithRetry = () => {
